@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+        - name: product
+          image: yaserkt786/product:latest
+          env:
+            - name: MONGO_URI
+              value: "mongodb://product-mongo-srv:27017/product"
+            # - name: JWT_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: jwt-secret
+            #       key: JWT_KEY
+            # - name: NATS_CLIENT_ID
+            #   valueFrom:
+            #     fieldRef:
+            #       fieldPath: metadata.name
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-srv
+spec:
+  selector:
+    app: product
+  ports:
+    - name: product
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

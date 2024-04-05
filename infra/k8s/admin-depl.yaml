@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      containers:
+        - name: admin
+          image: yaserkt786/admin:latest
+          env:
+            - name: MONGO_URI
+              value: "mongodb://admin1-mongo-srv:27017/admin"
+            # - name: JWT_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: jwt-secret
+            #       key: JWT_KEY
+            # - name: NATS_CLIENT_ID
+            #   valueFrom:
+            #     fieldRef:
+            #       fieldPath: metadata.name
+
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: admin-srv
+spec: 
+  selector:
+    app: admin
+  ports:
+    - name: admin
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
